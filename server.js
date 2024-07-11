@@ -4,20 +4,20 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+// Conexión a MongoDB Atlas
+const mongoURI = 'mongodb+srv://fredys:cvTZX3g7sTwW9bIs@cluster0.1imnmoy.mongodb.net/agendaDB?retryWrites=true&w=majority';
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+    .then(() => console.log('Conectado a MongoDB Atlas'))
+    .catch(err => console.error('Error de conexión a MongoDB:', err));
+
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-
-// Conexión a MongoDB usando URI de conexión directa
-const mongoURI = 'mongodb://localhost:27017/agendaDB';
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('Conectado a MongoDB'))
-.catch(err => console.error('Error de conexión a MongoDB:', err));
 
 // Definir el modelo de Nota
 const NotaSchema = new mongoose.Schema({
@@ -27,7 +27,7 @@ const NotaSchema = new mongoose.Schema({
 });
 const Nota = mongoose.model('Nota', NotaSchema);
 
-// Ruta principal para servir el archivo index.html
+// Ruta principal para servir el archivo index.html (si se requiere)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -64,6 +64,7 @@ app.delete('/notas/:id', async (req, res) => {
 });
 
 // Configuración del puerto
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 3006;
 app.listen(PORT, () => console.log(`Servidor escuchando en el puerto ${PORT}`));
+
 
