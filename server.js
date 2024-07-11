@@ -1,16 +1,17 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors());
 
-// Conexión a MongoDB (usando la URL de conexión desde las variables de entorno)
-const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/agendaDB';
+// Conexión a MongoDB usando URI de conexión directa
+const mongoURI = 'mongodb://localhost:27017/agendaDB';
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -60,12 +61,6 @@ app.delete('/notas/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-});
-
-// Middleware de manejo de errores
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Error interno del servidor' });
 });
 
 // Configuración del puerto
