@@ -10,18 +10,14 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// Conexión a MongoDB
-mongoose.connect('mongodb://localhost:27017/agendaDB', {
+// Conexión a MongoDB (usando la URL de conexión desde las variables de entorno)
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/agendaDB';
+mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
     .then(() => console.log('Conectado a MongoDB'))
     .catch(err => console.error('Error de conexión a MongoDB:', err));
-
-// Ruta para servir el archivo index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
 
 // Definir el modelo de Nota
 const NotaSchema = new mongoose.Schema({
@@ -31,7 +27,12 @@ const NotaSchema = new mongoose.Schema({
 });
 const Nota = mongoose.model('Nota', NotaSchema);
 
-// Rutas de API para manejar notas (ejemplo)
+// Ruta principal para servir el archivo index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Rutas de API para manejar notas
 app.get('/notas', async (req, res) => {
     try {
         const notas = await Nota.find();
@@ -62,5 +63,7 @@ app.delete('/notas/:id', async (req, res) => {
     }
 });
 
+// Configuración del puerto
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => console.log(`Servidor escuchando en el puerto ${PORT}`));
+
