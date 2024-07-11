@@ -1,13 +1,12 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
 
 // Conexión a MongoDB (usando la URL de conexión desde las variables de entorno)
@@ -16,8 +15,8 @@ mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-    .then(() => console.log('Conectado a MongoDB'))
-    .catch(err => console.error('Error de conexión a MongoDB:', err));
+.then(() => console.log('Conectado a MongoDB'))
+.catch(err => console.error('Error de conexión a MongoDB:', err));
 
 // Definir el modelo de Nota
 const NotaSchema = new mongoose.Schema({
@@ -61,6 +60,12 @@ app.delete('/notas/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+});
+
+// Middleware de manejo de errores
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Error interno del servidor' });
 });
 
 // Configuración del puerto
