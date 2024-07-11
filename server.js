@@ -18,8 +18,10 @@ mongoose.connect('mongodb://localhost:27017/agendaDB', {
     .then(() => console.log('Conectado a MongoDB'))
     .catch(err => console.error('Error de conexión a MongoDB:', err));
 
-// Configurar Express para servir archivos estáticos desde el directorio 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+// Ruta para servir el archivo index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Definir el modelo de Nota
 const NotaSchema = new mongoose.Schema({
@@ -29,7 +31,7 @@ const NotaSchema = new mongoose.Schema({
 });
 const Nota = mongoose.model('Nota', NotaSchema);
 
-// Rutas
+// Rutas de API para manejar notas (ejemplo)
 app.get('/notas', async (req, res) => {
     try {
         const notas = await Nota.find();
